@@ -4,7 +4,7 @@ Work in progress
 
 The goal is a wireless and solar-powered automatic gardening device that can be controlled from a phone.
 
-Expectations:
+Goals:
 * Capacitive soil moisture sensor (replaceable)
 * Software controlled solenoid valve
 * Solar-powered charging for li-ion batteries
