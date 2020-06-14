@@ -1,4 +1,4 @@
-# Smart Gardener
+## Smart Gardener
 
 Work in progress
 
