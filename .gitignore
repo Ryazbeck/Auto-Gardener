@@ -1,5 +1,7 @@
-smart-gardening.json
-creds*
-*.bak
-config.yaml
+venv
 __pycache__
+.vscode
+*node_modules*
+*wpa_supplicant*
+*logs*
+/networkHandler/networkHandlerPipe

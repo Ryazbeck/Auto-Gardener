@@ -1,10 +1,8 @@
-firebase-admin==4.3.0
-APScheduler==3.6.3
-pkg-resources==0.0.0
-pytz==2020.1
+click==7.1.2
+Flask==1.1.2
+Flask-Cors==3.0.8
+itsdangerous==1.1.0
+Jinja2==2.11.2
+MarkupSafe==1.1.1
 six==1.15.0
-tzlocal==2.1
-rpi-ws281x==4.2.4
-RPi.GPIO==0.7.0
-smbus2==0.3.0
-grove.py==0.6
+Werkzeug==1.0.1
