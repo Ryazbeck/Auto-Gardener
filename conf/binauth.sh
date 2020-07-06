@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #This software is released under the GNU GPL license.
 
 # This is an example script for BinAuth
@@ -33,8 +35,6 @@ ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
 update_config=1
 network={
   ssid="$USERNAME"
-  scan_ssid=1
-  key_mgmt=WPA-PSK
   psk="$PASSWORD"
 }
 _EOF_
