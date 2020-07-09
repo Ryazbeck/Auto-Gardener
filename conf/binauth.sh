@@ -28,7 +28,7 @@ case "$METHOD" in
 
                 if [[ ! -z $USERNAME && ! -z $PASSWORD ]]; then
                         echo "Updating wpa_supplicant.conf..."
-                        cat << _EOF_ > /etc/wpa_supplicant/wpa_supplicant.conf
+                        cat << _EOF_ > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 # Grant all members of group "netdev" permissions to configure WiFi, e.g. via wpa_cli or wpa_gui
 ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
 # Allow wpa_cli/wpa_gui to overwrite this config file
@@ -38,13 +38,35 @@ network={
   psk="$PASSWORD"
 }
 _EOF_
-                        ifdown wlan0
+                        sudo ifdown wlan0
                         sleep 3
-                        ifup wlan0
+                        sudo ifup wlan0
                         
-                        sleep 5
-                        echo 'Stopping Wifi AP...'
-                        ifdown ap0
+                        while ! ping -c1 -w2 8.8.8.8 &> /dev/null ;
+                        do
+                                sleep 1
+                                s=s+1
+                                if test $s -ge 60; then
+                                        s=0
+                                        m=m+1;
+                                fi
+                        done
+                        echo "Wifi Connected"
+                
+                        echo "Stopping AP Hotspot..."
+                        sudo ifdown ap0
+                        cat << _EOF_ > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+source-directory /etc/network/interfaces.d
+
+auto lo
+iface lo inet loopback
+
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+        wpa-conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+_EOF_ 
+                        sudo rm /etc/udev/rules.d/70-persistent-net.rules
+                        sudo reboot now
                         exit 0
                 fi
 
