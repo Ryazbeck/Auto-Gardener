@@ -2,18 +2,29 @@
 
 Components for assisting the user with initial setup.
 
-### run_udev_mac.sh:
-1. Runs at boot before hostapd/dnsmasq
-1. Greps WLAN0 mac from udev rules
-1. Updates udev rules if AP0 mac does not match WLAN0
+## Yarden Gnome Station
 
-### run_splash.sh:
-1. Listens for 3 second hold of physical button on device
+Work in progress
+
+Goals:
+* Mobile first
+* Capacitive soil moisture sensor (replaceable)
+* Waterproof
+* Store data centrally using python, Wifi, REST
+* Solar-powered charging for li-ion batteries
+* Software controlled solenoid valve
+* Open source
+* One-touch Wifi setup
+
+
+### captive_portal.sh:
+1. Runs at boot
+1. Listens for 3 second hold of button on station
 1. Turns up AP0
 1. Runs nodogsplash
-1. Back to listening
+1. Continues listening
 
-### run_wifi_config.sh:
+### conf/binauth.sh:
 1. Takes in user's Wi-fi SSID and Password
 1. Configures wpa_supplicant.conf
 1. Restarts wlan0

@@ -7,8 +7,10 @@ import re
 
 mac_address = check_output('sudo cat /sys/class/net/wlan0/address', shell=True).decode('utf-8').replace('\n', '')
 
-ap_udev_rule = f'SUBSYSTEM==\"ieee80211\", ACTION==\"add|change\", ATTR{{macaddress}}==\"{mac_address}\", KERNEL==\"phy0\", RUN+=\"/sbin/iw phy phy0 interface add ap0 type __ap\", RUN+=\"/bin/ip link set ap0 address {mac_address}\"'
-# ap_udev_rule_file = open("/etc/udev/rules.d/70-persistent-net.rules", "w")
+ap_udev_rule = f'SUBSYSTEM=="ieee80211", ACTION=="add|change", \
+ATTR{{macaddress}}=="{mac_address}", KERNEL=="phy0", \
+RUN+="/sbin/iw phy phy0 interface add ap0 type __ap", \
+RUN+="/bin/ip link set ap0 address {mac_address}"'
 
 interfaces = '''
 source-directory /etc/network/interfaces.d
@@ -50,6 +52,7 @@ def clean_up():
   run('sudo ndsctl stop', shell=True)
   run('sudo udevadm trigger', shell=True)
   run('sudo systemctl restart networking.service', shell=True)
+
 
 def run_splash():
     print("Setting up AP Hotspot...")
@@ -117,7 +120,6 @@ def run_splash():
       print('nodogsplash failed')
 
 
-
     # iter = 0
     # while iter < 30:
     #   hostapd_log = check_call('sudo journalctl -u hostapd -n 15 --no-pager', shell=True).decode('utf-8')
@@ -133,5 +135,8 @@ def run_splash():
 button = Button(24, hold_time=3, pull_up=False)
 button.when_held = run_splash
 
-print("Button is ready...")
-pause()
+try:
+  print("Button is ready...")
+  pause()
+except KeyboardInterrupt:
+  close()

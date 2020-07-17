@@ -1,3 +1,4 @@
+# for testing
 sudo ndsctl stop
 sudo ifdown ap0
 sudo systemctl disable hostapd.service dnsmasq.service
