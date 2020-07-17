@@ -2,18 +2,14 @@
 
 #This software is released under the GNU GPL license.
 
-# This is an example script for BinAuth
-# It verifies a client username and password and sets the session length.
-#
-# If BinAuth is enabled, NDS will call this script as soon as it has received an authentication request
-# from the web page served to the client's CPD (Captive Portal Detection) Browser by one of the following:
-#
-# 1. splash_sitewide.html
-# 2. PreAuth
-# 3. FAS
-#
-# The username and password entered by the clent user will be included in the query string sent to NDS via html GET
-# For an example, see the file splash_sitewide.html
+# 1. Takes user's Wi-fi SSID and Password
+# 2. Configures wpa_supplicant.conf
+# 3. Restarts wlan0
+# 4. Confirms connection is established
+#     1. TO-DO: Show confirmation on splash
+# 5. Disables ap0
+# 6. Stops nodogsplash
+# 7. Starts sensor service
 
 METHOD="$1"
 CLIENTMAC="$2"
@@ -55,6 +51,9 @@ _EOF_
                 
                         echo "Stopping AP Hotspot..."
                         sudo ifdown ap0
+
+                        # start sensor service here
+                        
                         cat << _EOF_ > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 source-directory /etc/network/interfaces.d
 
