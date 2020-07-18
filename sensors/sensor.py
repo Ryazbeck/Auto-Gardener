@@ -1,43 +1,53 @@
 
 from google.cloud import firestore
-# from grove_moisture_sensor import GroveMoistureSensor
+from grove.adc import ADC
+import time
 
 class Sensor:
-  def __init__(self, pin, sensor_id, user_id, zone_id, db):
-    self.pin = pin
+  def __init__(self, channel, manuf, sensor_type, sensor_id, user_id, zone_id, db):
+    self.channel = channel
+    self.manuf = manuf
+    self.sensor_type = sensor_type
     self.sensor_id = sensor_id
     self.user_id = user_id
     self.zone_id = zone_id
     self.db = db
+    self.adc = ADC()
 
-  @staticmethod
-  def compute_moisture(pin):
-    pass
-    # from grove.helper import SlotHelper
-    # sh = SlotHelper(SlotHelper.ADC)
-    # pin = sh.argv2pin()
 
-    # sensor = GroveMoistureSensor(pin)
+  @property
+  def voltage(self):
+    return self.adc.read_voltage(self.channel)
 
-    # print('Detecting moisture...')
-    # while True:
-    #     m = sensor.moisture
-    #     if 0 <= m and m < 300:
-    #         result = 'Dry'
-    #     elif 300 <= m and m < 600:
-    #         result = 'Moist'
-    #     else:
-    #         result = 'Wet'
-    #     print('Moisture value: {0}, {1}'.format(m, result))
-    #     time.sleep(1)
+
+  @property
+  def percentage(self):
+    voltage = self.voltage
+    if self.sensor_type == 'moisture':
+      if self.manuf == 'seeed':
+        return self.calculate_percentage(1300,2000,voltage)
+      else:
+        return self.calculate_percentage(1130,2400,voltage)
+    if self.sensor_type == 'sunlight':
+      return self.calculate_percentage(20,3260,voltage)
+
+
+  def calculate_percentage(self, min, max, input):
+    range = max - min
+    correctedStartValue = input - min
+    percentage = int((1 - (correctedStartValue / range)) * 100)
+    if percentage < 0:
+        return 0
+    elif percentage > 100:
+        return 100
+    return percentage
 
 
   def post_to_firestore(self):
     self.db.collection('moisture').add({
       'created': firestore.SERVER_TIMESTAMP,
-      'sensor_id': self.sensor_id,
-      'user_id': self.user_id,
-      'value': 45,
-      # 'value': self.compute_moisture(self.pin),
-      'zone_id': self.zone_id
+      'sensorId': self.sensor_id,
+      'userId': self.user_id,
+      'value': self.percentage,
+      'zoneId': self.zone_id
     })
