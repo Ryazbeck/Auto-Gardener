@@ -6,3 +6,5 @@ smart-gardening.json
 creds*
 *.bak
 config.yaml
+**/*.log
+**/notes*
