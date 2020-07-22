@@ -1,4 +1,4 @@
-1. start.py listens for button
+1. run start.py at boot - listens for button
   1. when pressed run splash
     1. config udev
     1. config interfaces
