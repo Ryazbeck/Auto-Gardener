@@ -17,28 +17,14 @@
         
         <form method="post" action="/" onsubmit="return showLoading();">
 
-          %if stage == 'established':
+          %if stage == 'configured':
 
             <h3 id="header">
-              Connection established<br>
-              You should now see these sensors in your account<br>
-              This hotspot will be disabled in <i id="countdown">10</i> seconds
+              Connection configured but needs to restart<br>
+              Hotspot will be disabled.<br>
+              <i style="color:red">If there are errors the light will be red</i><br>
+              <a href="/restart">Click here to restart</a>
             </h3>
-            <script>
-              let countdown = document.getElementById("countdown");
-              if (countdown) {
-                countdown_value = Number(countdown.innerText);
-                var x = setInterval(function(){ 
-                  countdown_value = countdown_value - 1;
-                  console.log(countdown_value)
-                  countdown.innerText = countdown_value;
-                  if (countdown_value <= 0) {
-                    clearInterval(x);
-                    document.getElementById("header").innerText = "Hotspot disabled...";
-                  }
-                }, 1000);
-              }
-            </script>
 
           %else:
 
@@ -59,6 +45,7 @@
               <label>Password:<br></label> 
               <input type="password" name="password" value=""><br>
               <input type="submit" value="Continue">
+              <a href="https://www.google.com" target="_blank" rel="noopener">Test link</a>
             </div>
 
             <div id="loader" class="hidden">
@@ -105,6 +92,17 @@
                 wifiform.style.height = "0px";
                 loader.classList.toggle("hidden")
               }
+
+              // let tester = document.getElementById("tester");
+              // tester.addEventListener("onsubmit", testRest)
+
+              // async function testRest() {
+              //   let a = fetch("/test")
+              //   .then(r => {
+              //     console.log(r)
+              //     tester.innerText = r
+              //   })
+              // }
             </script>
             
           %end
@@ -117,6 +115,13 @@
 </html>
 
 <style>
+  .tester {
+    padding: 5px;
+    border-radius: 3px;
+    background-color: #999;
+    color: rgb(141, 216, 90);
+  }
+
   .hidden {
     visibility: hidden;
   }
@@ -158,7 +163,7 @@
   }
 
   input:not(:last-child), select {
-    width: 350px;
+    width: 250px;
   }
 
   input, button, select, textarea {
