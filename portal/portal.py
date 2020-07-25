@@ -1,13 +1,13 @@
 import logging
 from gevent.subprocess import check_output, check_call, Popen, PIPE
 from inspect import cleandoc
-from os import remove
+from os import remove, path
 from bottle import Bottle, template, get, post, request
 from gevent import sleep, monkey
 monkey.patch_all()
 
 logging.basicConfig(
-    filename=f'log/{__file__}.log',
+    filename=f'{path.basename(__file__)}.log',
     level=logging.ERROR,
     format='%(asctime)s %(levelname)-8s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')

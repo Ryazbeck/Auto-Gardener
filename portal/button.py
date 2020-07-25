@@ -9,16 +9,20 @@ import logging
 
 yg_dir = path.dirname(path.realpath(__file__))
 logger = logging.basicConfig(
-    filename=f'{yg_dir}/log/{path.basename(__file__)}.log',
+    filename=f'{path.basename(__file__)}.log',
     level=logging.ERROR,
     format='%(asctime)s %(levelname)-8s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
-mac_address = check_output(
-    'sudo cat /sys/class/net/wlan0/address',
-    shell=True,
-    encoding='utf8').replace('\n', '')
+try:
+    mac_address = check_output(
+        'cat /sys/class/net/wlan0/address',
+        shell=True,
+        encoding='utf8').replace('\n', '')
+except Exception as e:
+    mac_address = None
+    logger.error(e)
 
 interfaces = f'''
 source-directory /etc/network/interfaces.d
@@ -73,7 +77,7 @@ def run_splash():
     try:
         logging.info('Starting nodogsplash')
         nds = check_call(
-            f'sudo nodogsplash &> {yg_dir}/log/nds.log',
+            f'sudo nodogsplash &> nds.log',
             shell=True,
             stdout=PIPE,
             stderr=PIPE,
