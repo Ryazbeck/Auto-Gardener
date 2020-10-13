@@ -12,21 +12,27 @@ ATTR{{macaddress}}=="{mac_address}", KERNEL=="phy0", \
 RUN+="/sbin/iw phy phy0 interface add ap0 type __ap", \
 RUN+="/bin/ip link set ap0 address {mac_address}"'
 
-interfaces = '''
+interfaces = f'''
 source-directory /etc/network/interfaces.d
-
 auto lo
 iface lo inet loopback
+allow-hotplug wlan0
+iface wlan0 inet manual
+        wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+iface AP inet dhcp
 
 allow-hotplug ap0
 iface ap0 inet static
-       address 192.168.100.1
-       netmask 255.255.255.0
-       hostapd /etc/hostapd/hostapd.conf
-
-allow-hotplug wlan0
-iface wlan0 inet dhcp
-        wpa-conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        pre-up ifdown --force wlan0
+        pre-up iw phy phy0 interface add ap0 type __ap
+        pre-up ip link set ap0 address b8:27:eb:e4:72:a6
+        post-up systemctl restart dnsmasq
+        post-up ifup wlan0
+        post-down iw dev ap0 del
+        post-down systemctl stop dnsmasq
+        address 192.168.100.1
+        netmask 255.255.255.0
+        hostapd /etc/hostapd/hostapd.conf
 '''
 
 interfaces_clean = '''

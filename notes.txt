@@ -1,0 +1,27 @@
+docker run -d --privileged --net host -v $(pwd)/wificfg.json:/cfg/wificfg.json cjimti/iotwifi:arm32v6-1.0.4
+docker run -d --rm --privileged --net host -v $(pwd)/wificfg.json:/cfg/wificfg.json d56ebaf061b7
+docker run -d --rm --privileged --net host -v $(pwd)/wificfg.json:/cfg/wificfg.json yg/txwifi:testing
+
+
+
+docker run -d --rm --privileged --net host -v $(pwd)/wificfg.json:/cfg/wificfg.json -v /etc/wpa_supplicant/wpa_supplicant.conf:/cfg/wpa_supplicant.conf cjimti/iotwifi:arm32v6-1.0.4
+
+curl -w "\n" -d '{"ssid":"thouartcreepy2g", "psk":"holyghost"}' \
+     -H "Content-Type: application/json" \
+     -X POST localhost:8080/connect
+
+curl http://localhost:8080/apdown
+
+curl http://localhost:8080/status
+
+CGO_ENABLED=0 go build -a -installsuffix cgo -o . ./main.go
+
+
+configure image
+clone image
+make base image
+test functionality
+build flask server for ^ functionality
+update Dockerfile for flask server
+build web server to interface with flask
+update Dockerfile for web server
