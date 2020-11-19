@@ -1,0 +1,13 @@
+[Unit]
+Description=Launches Yarden Gnome wifi setup portal
+
+[Service]
+WorkingDirectory=/etc/yarden-gnome-station/portal
+ExecStart=/etc/yarden-gnome-station/portal/venv/bin/python3 /etc/yarden-gnome-station/portal/button.py
+StandardError=syslog
+SyslogIdentifier=YardenGnome
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

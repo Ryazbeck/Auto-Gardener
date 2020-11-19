@@ -7,9 +7,7 @@ from gevent import sleep, monkey
 monkey.patch_all()
 
 logging.basicConfig(
-    filename=f'{path.basename(__file__)}.log',
     level=logging.ERROR,
-    format='%(asctime)s %(levelname)-8s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
