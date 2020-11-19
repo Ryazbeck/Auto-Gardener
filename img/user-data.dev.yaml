@@ -8,12 +8,12 @@ manage_etc_hosts: true
 
 # You could modify this for your own user information
 users:
-  - name: yg
+  - name: uid
     gecos: "Yarden Gnome"
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     groups: users,docker,video,input,systemd-journal
-    plain_text_passwd: { PASSWORD }
+    plain_text_passwd: pwd
     lock_passwd: false
     ssh_pwauth: true
     chpasswd: { expire: false }
@@ -37,6 +37,7 @@ packages:
   - gitlab-runner
   - dkms
   - lshw
+  - apt-get install linux-headers-$(uname -r)
 
 # # WiFi connect to HotSpot
 # # - use `wpa_passphrase SSID PASSWORD` to encrypt the psk
@@ -45,14 +46,6 @@ write_files:
     content: |
       source-directory /etc/network/interfaces.d
       auto lo
-
-      iface lo inet loopback
-      iface wlan0 inet dhcp
-      wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-      allow-hotplug wlan1
-      iface wlan1 inet dhcp
-      wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
       allow-hotplug wlan2
       iface wlan2 inet static
@@ -94,31 +87,36 @@ runcmd:
   # Pickup the hostname changes
   - [systemctl restart avahi-daemon]
   # install wifi dongle drivers
-  # - []
-  # start ygwifi service
   - [
-      docker run --name ygwifi \
-      --sysctl net.ipv6.conf.all.disable_ipv6=1 \
-      --restart always \
-      --dns 8.8.8.8 \
-      --dns 8.8.4.4 \
-      ryazbeck/ygwifi:dev,
+      git clone -b arm https://github.com/kelebek333/rtl8188fu rtl8188fu-arm,
+      sudo dkms add ./rtl8188fu-arm,
+      sudo dkms build rtl8188fu/1.0,
+      sudo dkms install rtl8188fu/1.0,
+      sudo cp ./rtl8188fu-arm/firmware/rtl8188fufw.bin /lib/firmware/rtlwifi/,
     ]
-  - [apt-get install linux-headers-$(uname -r)]
+  # start ygwifi service
+  # - [
+  #     docker run --name ygwifi \
+  #     --sysctl net.ipv6.conf.all.disable_ipv6=1 \
+  #     --restart always \
+  #     --dns 8.8.8.8 \
+  #     --dns 8.8.4.4 \
+  #     ryazbeck/ygwifi:dev,
+  #   ]
   # start yarden-gnome-button
   # - []
   # start yarden-gnome-station
   # - []
   # register gitlab runner
-  - [
-      export YGWIFI_ENV=dev &&,
-      export PROJECT_REGISTRATION_TOKEN=<TOKEN HERE> &&,
-      sudo gitlab-runner register,
-      "--config /etc/gitlab-runner/config.toml",
-      "--non-interactive",
-      "--url 'https://gitlab.com/'",
-      "--registration-token '$PROJECT_REGISTRATION_TOKEN'",
-      "--executor 'shell'",
-      "--description 'ygwifi-$YGWIFI_ENV'",
-      "--tag-list '$YGWIFI_ENV'",
-    ]
+  # - [
+  #     export YGWIFI_ENV=dev,
+  #     export PROJECT_REGISTRATION_TOKEN=<TOKEN>,
+  #     sudo gitlab-runner register \
+  #     "--config /etc/gitlab-runner/config.toml" \
+  #     "--non-interactive" \
+  #     "--url 'https://gitlab.com/'" \
+  #     "--registration-token '$PROJECT_REGISTRATION_TOKEN'" \
+  #     "--executor 'shell'" \
+  #     "--description 'ygwifi-$YGWIFI_ENV'" \
+  #     "--tag-list '$YGWIFI_ENV'",
+  #   ]
