@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  station:
+    container_name: yarden_gnome
+    image: yg:dev
+    network_mode: host
+    privileged: true
+    build: ./
+    devices:
+      - "/dev/ttyAMA0:/dev/ttyAMA0"
+      - "/dev/mem:/dev/mem"

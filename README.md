@@ -2,29 +2,32 @@
 
 
 * [Purpose](#Purpose)
-* [Goals](#goals)
+* [Goals](#Goals)
 
 
 ## Purpose
 
-
-#### portal:
-##### Assist user with initial setup
+#### button service:
+##### Assists user with initial setup
 1. Runs at boot
 1. Listens for 3 second hold of button on station
-    * This will take inputs to check status
-    * Such as "tap" or various hold lengths
-    * RGB LED will provide feedback
-1. Turns up AP0
-1. Configures wifi with user's input
-1. Runs [nodogsplash](https://github.com/nodogsplash/nodogsplash)
-1. Continues listening
+    1. docker-compose run -d button (web server and python server)
+        1. host files are bind volumes
+        1. servers take user wifi info, configures pi, verifies connection, stops AP0, stops self
+    1. Turns up AP0
 
-#### sensors:
-1. Retrieves its config stored on server
-1. Reads sensor values
-1. Stores sensor reads on server
+#### sensor service:
+##### Retrieves and stores sensor data
+1. Runs at boot
+1. If sensors then read
+    1. If internet available
+        1. Retrieve config from server
+    1. If no internet
+        1. Store local until internet available again
+        1. push local to remote
+1. If no sensors then report on portal that station has no sensors
 1. Threshold logic is handled in Firebase Functions
+
 
 ## Goals
 

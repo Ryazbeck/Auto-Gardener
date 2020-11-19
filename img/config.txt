@@ -1,0 +1,2 @@
+dtparam=i2c
+enable_uart=1

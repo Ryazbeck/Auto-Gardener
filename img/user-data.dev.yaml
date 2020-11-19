@@ -1,0 +1,122 @@
+#cloud-config
+# vim: syntax=yaml
+#
+
+# Set your hostname here, the manage_etc_hosts will update the hosts file entries as well
+hostname: yardengnome
+manage_etc_hosts: true
+
+# You could modify this for your own user information
+users:
+  - name: uid
+    gecos: "Yarden Gnome"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: users,docker,video,input,systemd-journal
+    plain_text_passwd: pwd
+    lock_passwd: false
+    ssh_pwauth: true
+    chpasswd: { expire: false }
+
+# # Set the locale of the system
+locale: "en_US.UTF-6"
+
+# # Set the timezone
+# # Value of 'timezone' must exist in /usr/share/zoneinfo
+timezone: "America/Chicago"
+
+# # Update apt packages on first boot
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+# # Install any additional apt packages you need here
+packages:
+  - raspberrypi-kernel-headers
+  - build-essential
+  - gitlab-runner
+  - dkms
+  - lshw
+  - apt-get install linux-headers-$(uname -r)
+
+# # WiFi connect to HotSpot
+# # - use `wpa_passphrase SSID PASSWORD` to encrypt the psk
+write_files:
+  - path: /etc/network/interfaces
+    content: |
+      source-directory /etc/network/interfaces.d
+      auto lo
+
+      allow-hotplug wlan2
+      iface wlan2 inet static
+      wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+      address 192.168.1.200
+      netmask 255.255.255.0
+      gateway 192.168.1.1
+      dns-nameservers 8.8.8.8
+      dns-nameservers 8.8.4.4
+  - path: /etc/gitlab-runner/config.toml
+    content: |
+      check_interval = 0
+      concurrent = 1
+
+      [[runners]]
+        name = "shell"
+        url = "https://gitlab.com/"
+        token = "<GITLAB RUNNER TOKEN>"
+        limit = 2
+        executor = "shell"
+        builds_dir = ""
+  - path: /etc/wpa_supplicant/wpa_supplicant.conf
+    content: |
+      country=us
+      ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+      update_config=1
+      network={
+        ssid="<SSID>"
+        psk="<KEY>"
+      }
+  - path: /etc/sysctl.conf
+    content: |
+      net.ipv6.conf.all.disable_ipv6 = 1
+      net.ipv6.conf.default.disable_ipv6 = 1
+      net.ipv6.conf.lo.disable_ipv6 = 1
+
+# These commands will be ran once on first boot only
+runcmd:
+  # Pickup the hostname changes
+  - [systemctl restart avahi-daemon]
+  # install wifi dongle drivers
+  - [
+      git clone -b arm https://github.com/kelebek333/rtl8188fu rtl8188fu-arm,
+      sudo dkms add ./rtl8188fu-arm,
+      sudo dkms build rtl8188fu/1.0,
+      sudo dkms install rtl8188fu/1.0,
+      sudo cp ./rtl8188fu-arm/firmware/rtl8188fufw.bin /lib/firmware/rtlwifi/,
+    ]
+  # start ygwifi service
+  # - [
+  #     docker run --name ygwifi \
+  #     --sysctl net.ipv6.conf.all.disable_ipv6=1 \
+  #     --restart always \
+  #     --dns 8.8.8.8 \
+  #     --dns 8.8.4.4 \
+  #     ryazbeck/ygwifi:dev,
+  #   ]
+  # start yarden-gnome-button
+  # - []
+  # start yarden-gnome-station
+  # - []
+  # register gitlab runner
+  # - [
+  #     export YGWIFI_ENV=dev,
+  #     export PROJECT_REGISTRATION_TOKEN=<TOKEN>,
+  #     sudo gitlab-runner register \
+  #     "--config /etc/gitlab-runner/config.toml" \
+  #     "--non-interactive" \
+  #     "--url 'https://gitlab.com/'" \
+  #     "--registration-token '$PROJECT_REGISTRATION_TOKEN'" \
+  #     "--executor 'shell'" \
+  #     "--description 'ygwifi-$YGWIFI_ENV'" \
+  #     "--tag-list '$YGWIFI_ENV'",
+  #   ]
