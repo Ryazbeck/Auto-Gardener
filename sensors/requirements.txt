@@ -32,4 +32,4 @@ six==1.15.0
 smbus2==0.3.0
 tzlocal==2.1
 uritemplate==3.0.1
-urllib3==1.25.9
+urllib3==1.26.5
