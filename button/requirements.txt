@@ -1,4 +1,4 @@
-bottle==0.12.18
+bottle==0.12.20
 colorzero==1.1
 gevent==20.6.2
 gpiozero==1.5.1
