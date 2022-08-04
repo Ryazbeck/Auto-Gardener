@@ -1,8 +1,6 @@
-venv
+venv*
 __pycache__
 .vscode
-main.py
-smart-gardening.json
-creds*
-*.bak
-config.yaml
+log/*
+!log
+**/notes*

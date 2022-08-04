@@ -14,18 +14,99 @@
   <main>
     <div class="form">
       <h2>Yarden Gnome Station</h2>
-      <h5>Connect to your wi-fi:</h5>
         
-        <form method="get" action="$authaction">
-          <input type="hidden" name="tok" value="$tok">
-          <input type="hidden" name="redir" value="$redir">
+        <form method="post" action="/" onsubmit="return showLoading();">
 
-          <div>SSID:<br></div> 
-            <input type="text" name="username" value="">
-          <div>Password:<br></div> 
-            <input type="password" name="password" value="">
+          %if stage == 'configured':
 
-          <input type="submit" value="Continue">
+            <h3 id="header">
+              Connection configured but needs to restart<br>
+              Hotspot will be disabled.<br>
+              <i style="color:red">If there are errors the light will be red</i><br>
+              <a href="/restart">Click here to restart</a>
+            </h3>
+
+          %else:
+
+            %if message != 'none':
+              <div>Error: {{message}}</div>
+            %end
+            
+            <div id="wifiform">
+              <h3>Connect to your wi-fi:</h3>
+              <label>SSID:<br></label>
+              <select name="username">
+                %for ssid in ssids:
+                  <option>
+                    {{ssid}}
+                  </option>
+                %end
+              </select>
+              <label>Password:<br></label> 
+              <input type="password" name="password" value=""><br>
+              <input type="submit" value="Continue">
+              <a href="https://www.google.com" target="_blank" rel="noopener">Test link</a>
+            </div>
+
+            <div id="loader" class="hidden">
+              <h3 id="header" style="margin-bottom: 5px;">Configuring Station Wifi</h3>
+
+              <!-- animation source: https://codepen.io/nikhil8krishnan/pen/rVoXJa -->
+              <svg style="width:100px; height:100px;" version="1.1" id="L4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+              viewBox="0 20 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
+                  <animate
+                    attributeName="opacity"
+                    dur="1s"
+                    values="0;1;0"
+                    repeatCount="indefinite"
+                    begin="0.1"/>    
+                </circle>
+                <circle fill="#fff" stroke="none" cx="26" cy="50" r="6">
+                  <animate
+                    attributeName="opacity"
+                    dur="1s"
+                    values="0;1;0"
+                    repeatCount="indefinite" 
+                    begin="0.2"/>       
+                </circle>
+                <circle fill="#fff" stroke="none" cx="46" cy="50" r="6">
+                  <animate
+                    attributeName="opacity"
+                    dur="1s"
+                    values="0;1;0"
+                    repeatCount="indefinite" 
+                    begin="0.3"/>     
+                </circle>
+              </svg>
+    
+            </div>
+
+            <script>
+              let wifiform = document.getElementById("wifiform");
+              let loader = document.getElementById("loader");
+              
+              function showLoading() {
+                console.log('testing onsubmit')
+                wifiform.classList.toggle("hidden")
+                wifiform.style.height = "0px";
+                loader.classList.toggle("hidden")
+              }
+
+              // let tester = document.getElementById("tester");
+              // tester.addEventListener("onsubmit", testRest)
+
+              // async function testRest() {
+              //   let a = fetch("/test")
+              //   .then(r => {
+              //     console.log(r)
+              //     tester.innerText = r
+              //   })
+              // }
+            </script>
+            
+          %end
+
         </form>
           
     </div>
@@ -34,6 +115,17 @@
 </html>
 
 <style>
+  .tester {
+    padding: 5px;
+    border-radius: 3px;
+    background-color: #999;
+    color: rgb(141, 216, 90);
+  }
+
+  .hidden {
+    visibility: hidden;
+  }
+  
   html, body {
     position: relative;
     width: 100%;
@@ -67,13 +159,18 @@
 
   label {
     display: block;
+    margin-bottom: 5px;
+  }
+
+  input:not(:last-child), select {
+    width: 250px;
   }
 
   input, button, select, textarea {
     font-family: inherit;
     font-size: inherit;
     padding: 0.4em;
-    margin: 0 0 0.5em 0;
+    margin: 0 0 0.75em 0;
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 2px;

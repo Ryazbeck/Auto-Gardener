@@ -1,0 +1,17 @@
+1. run start.py at boot - listens for button
+  1. when pressed run splash
+    1. config udev
+    1. config interfaces
+    1. config dnsmasq to route all traffic to gateway (make NDS think it has internet)
+    1. udevadm trigger
+    1. restart networking
+    1. enable hostapd and dnsmasq
+    1. start hostapd and dnsmasq
+    1. flush and bounce wlan/ap
+  1. when un/pw submitted
+    1. config wpa_supp
+    1. restart wlan0
+    1. test ping
+    1. if success
+      1. remove ap0 from udev and interfaces
+      1. reboot
