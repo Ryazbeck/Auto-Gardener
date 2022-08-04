@@ -27,7 +27,7 @@ PyYAML==5.4
 requests==2.24.0
 rpi-ws281x==4.2.4
 RPi.GPIO==0.7.0
-rsa==4.6
+rsa==4.7
 six==1.15.0
 smbus2==0.3.0
 tzlocal==2.1
