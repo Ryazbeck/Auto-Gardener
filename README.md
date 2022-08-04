@@ -3,6 +3,7 @@
 
 * [Purpose](#Purpose)
 * [Goals](#Goals)
+* [Photos](#device-photos)
 
 
 ## Purpose
@@ -47,4 +48,15 @@
 * Cloud-based data and config
 * Thresholds for controlling valve
 * [Hypriot](https://github.com/hypriot/image-builder-rpi) for containerization
+
+##### Device photos:
+Version 1: 
+
+[![v1_full](./assets/photos/v1_full.jpg)](./assets/photos/v1_full.jpg)
+[![v1_zoom](./assets/photos/v1_zoom.jpg)](./assets/photos/v1_zoom.jpg)
+
+Version 2: 
+
+[![v2_full](./assets/photos/v2_full.jpg)](./assets/photos/v2_full.jpg)
+[![v2_zoom](./assets/photos/v2_zoom.jpg)](./assets/photos/v2_zoom.jpg)
 
